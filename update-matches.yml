@@ -1,0 +1,32 @@
+name: Обновление матчей дня
+
+on:
+  schedule:
+    - cron: '0 6 * * *'      # каждый день в 06:00 UTC (09:00 МСК). Меняйте при желании.
+  workflow_dispatch:          # позволяет запускать вручную кнопкой в GitHub
+
+permissions:
+  contents: write             # нужно, чтобы экшен мог закоммитить data/matches.json
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Получить матчи и пересчитать прогнозы
+        env:
+          FOOTBALL_API_KEY: ${{ secrets.FOOTBALL_API_KEY }}
+        run: node scripts/fetch-matches.mjs
+
+      - name: Закоммитить обновлённые данные
+        run: |
+          git config user.name  "matches-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/matches.json
+          git commit -m "data: матчи на $(date -u +%Y-%m-%d)" || echo "Изменений нет"
+          git push

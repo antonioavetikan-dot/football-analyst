@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pro Football Analyst AI — анализ матчей и стратегия</title>
+<meta name="description" content="Глубокий анализ футбольных матчей дня и низкорисковые ставочные инсайты с прозрачным обоснованием прогнозов." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e14; --bg-2:#0e131c; --panel:#121a26; --panel-2:#162133;
+    --line:#1f2b3e; --line-soft:#172234;
+    --ink:#e8eef7; --ink-dim:#8da0bb; --ink-faint:#5a6b85;
+    --pitch:#9bf00b; --pitch-deep:#6fb800; --cyan:#34e0e0;
+    --low:#21d07a; --med:#f5b13d; --high:#ff5d6c;
+    --radius:16px; --shadow:0 18px 48px -22px rgba(0,0,0,.85);
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1200px 600px at 82% -12%, rgba(155,240,11,.07), transparent 60%),
+      radial-gradient(900px 520px at -8% 8%, rgba(52,224,224,.06), transparent 55%),
+      var(--bg);
+    color:var(--ink); font-family:'Hanken Grotesk',system-ui,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:.4;z-index:0;
+    background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+    background-size:64px 64px;-webkit-mask:radial-gradient(1100px 760px at 50% 0%,#000 18%,transparent 78%);mask:radial-gradient(1100px 760px at 50% 0%,#000 18%,transparent 78%);
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+  a{color:inherit}
+
+  /* HEADER */
+  header{padding:18px 0 14px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:60;
+    background:linear-gradient(180deg,rgba(10,14,20,.97),rgba(10,14,20,.8));backdrop-filter:blur(12px)}
+  .head-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:13px}
+  .logo{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;flex:none;
+    background:radial-gradient(circle at 30% 25%,#1f3014,#0c1108);border:1px solid #2c3f1c;box-shadow:inset 0 0 18px rgba(155,240,11,.22)}
+  .brand h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.24rem;letter-spacing:-.02em;line-height:1.02}
+  .brand h1 b{color:var(--pitch)}
+  .brand p{font-size:.7rem;color:var(--ink-faint);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+  .head-meta{display:flex;align-items:center;gap:20px}
+  nav{display:flex;gap:4px}
+  nav a{color:var(--ink-dim);text-decoration:none;font-size:.85rem;font-weight:600;padding:7px 12px;border-radius:9px;transition:.18s}
+  nav a:hover{color:var(--ink);background:var(--panel)}
+  .live{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.7rem;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--low);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(33,208,122,.5)}70%{box-shadow:0 0 0 9px rgba(33,208,122,0)}100%{box-shadow:0 0 0 0 rgba(33,208,122,0)}}
+
+  /* HERO */
+  .hero{padding:40px 0 8px}
+  .kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--pitch);
+    border:1px solid rgba(155,240,11,.3);border-radius:30px;padding:5px 13px;margin-bottom:18px;background:rgba(155,240,11,.05)}
+  .hero h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2rem,5vw,3.3rem);letter-spacing:-.03em;line-height:1.03;max-width:20ch}
+  .hero h2 span{color:var(--pitch)}
+  .hero .lead{color:var(--ink-dim);max-width:64ch;margin-top:16px;font-size:1.04rem}
+  .stat-strip{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+  .stat{background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid var(--line);border-radius:13px;padding:13px 18px;min-width:128px}
+  .stat b{font-family:var(--mono);font-size:1.45rem;color:var(--ink);display:block;letter-spacing:-.02em}
+  .stat small{color:var(--ink-faint);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
+
+  .notice{margin-top:24px;display:flex;gap:11px;align-items:flex-start;background:rgba(245,177,61,.07);border:1px solid rgba(245,177,61,.28);
+    border-radius:12px;padding:13px 16px;color:#f1d49d;font-size:.84rem;max-width:820px}
+  .notice svg{flex:none;margin-top:1px}
+
+  /* SECTION HEAD */
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:50px 0 16px;flex-wrap:wrap}
+  .sec-head h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.55rem;letter-spacing:-.02em;display:flex;align-items:center;gap:11px}
+  .sec-head h3::before{content:"";width:9px;height:24px;background:var(--pitch);border-radius:3px;display:inline-block}
+  .sec-head p{color:var(--ink-faint);font-size:.86rem}
+
+  /* FILTERS */
+  .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+  .filters select{appearance:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;
+    padding:9px 36px 9px 13px;font-family:inherit;font-size:.86rem;font-weight:600;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238da0bb' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center}
+  .chips{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:var(--panel);color:var(--ink-dim);border-radius:30px;padding:8px 15px;font-size:.82rem;font-weight:600;cursor:pointer;transition:.16s;font-family:inherit}
+  .chip:hover{color:var(--ink);border-color:#2c3d57}
+  .chip.active{background:var(--ink);color:#0a0e14;border-color:var(--ink)}
+  .chip[data-risk="low"].active{background:var(--low);border-color:var(--low);color:#062814}
+  .chip[data-risk="medium"].active{background:var(--med);border-color:var(--med);color:#2c1c00}
+  .chip[data-risk="high"].active{background:var(--high);border-color:var(--high);color:#2c0008}
+  .count{margin-left:auto;color:var(--ink-faint);font-family:var(--mono);font-size:.78rem}
+
+  /* MATCH GRID */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(345px,1fr));gap:18px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;animation:rise .5s both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .card-top{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:10px}
+  .league-tag{display:flex;align-items:center;gap:8px;font-size:.74rem;color:var(--ink-dim);font-weight:600}
+  .league-tag .flag{width:18px;height:13px;border-radius:2px;flex:none;background:var(--panel-2);font-size:11px;display:grid;place-items:center;line-height:1}
+  .ko{font-family:var(--mono);font-size:.78rem;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);padding:4px 9px;border-radius:7px}
+  .risk-flag{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:30px}
+  .risk-low{background:rgba(33,208,122,.13);color:var(--low);border:1px solid rgba(33,208,122,.35)}
+  .risk-medium{background:rgba(245,177,61,.13);color:var(--med);border:1px solid rgba(245,177,61,.35)}
+  .risk-high{background:rgba(255,93,108,.13);color:var(--high);border:1px solid rgba(255,93,108,.35)}
+
+  .teams{padding:18px 16px 8px}
+  .team-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0}
+  .team-row .nm{display:flex;align-items:center;gap:11px;font-weight:700;font-size:1.02rem}
+  .badge{width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:.8rem;color:#0a0e14}
+  .form{display:flex;gap:3px}
+  .form i{width:16px;height:16px;border-radius:4px;font-style:normal;font-size:.6rem;font-weight:700;display:grid;place-items:center;color:#0a0e14}
+  .form .W{background:var(--low)} .form .D{background:var(--ink-faint);color:#fff} .form .L{background:var(--high)}
+  .vs{text-align:center;font-family:var(--mono);font-size:.7rem;color:var(--ink-faint);letter-spacing:.1em;margin:2px 0}
+
+  .summary{padding:8px 16px 4px;color:var(--ink-dim);font-size:.88rem}
+  .why{padding:10px 16px 0;display:flex;flex-direction:column;gap:5px}
+  .why li{list-style:none;display:flex;gap:8px;font-size:.8rem;color:var(--ink-dim)}
+  .why li svg{flex:none;margin-top:3px;color:var(--pitch)}
+
+  .preds{padding:14px 16px 16px;margin-top:10px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .pred{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:9px 11px}
+  .pred small{display:block;color:var(--ink-faint);font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+  .pred b{font-size:.96rem;font-weight:700}
+  .pred .conf{font-family:var(--mono);font-size:.68rem;color:var(--pitch);margin-top:2px}
+  .pred.full{grid-column:1 / -1}
+
+  .conf-bar{height:5px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:6px}
+  .conf-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pitch-deep),var(--pitch));border-radius:4px}
+
+  .card-foot{padding:11px 16px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+  .odds{display:flex;gap:9px}
+  .odds span{color:var(--ink-dim)}
+  .odds b{color:var(--ink)}
+
+  .empty{grid-column:1/-1;text-align:center;padding:50px;color:var(--ink-faint);border:1px dashed var(--line);border-radius:var(--radius)}
+
+  /* STRATEGY */
+  .strategy{margin-top:18px;display:grid;grid-template-columns:340px 1fr;gap:18px}
+  .panel{background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+  .panel h4{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+  .ladder-meta{display:flex;flex-direction:column;gap:12px}
+  .lm{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px}
+  .lm small{color:var(--ink-faint);font-size:.78rem}
+  .lm b{font-family:var(--mono);font-size:1.1rem}
+  .lm b.green{color:var(--pitch)}
+  .rules{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+  .rules li{list-style:none;display:flex;gap:9px;font-size:.84rem;color:var(--ink-dim)}
+  .rules li svg{flex:none;margin-top:3px;color:var(--low)}
+
+  table.ladder{width:100%;border-collapse:collapse;font-size:.84rem}
+  table.ladder th{text-align:left;color:var(--ink-faint);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--line)}
+  table.ladder td{padding:10px;border-bottom:1px solid var(--line-soft);font-family:var(--mono)}
+  table.ladder tr:hover td{background:var(--panel-2)}
+  table.ladder td.lvl{color:var(--pitch);font-weight:700}
+  .picks{margin-top:16px;display:flex;flex-direction:column;gap:9px}
+  .pickrow{display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px}
+  .pickrow .n{width:24px;height:24px;border-radius:7px;background:var(--pitch);color:#0a0e14;font-family:var(--mono);font-weight:700;display:grid;place-items:center;font-size:.78rem;flex:none}
+  .pickrow .info{flex:1;min-width:0}
+  .pickrow .info b{font-size:.9rem}
+  .pickrow .info span{display:block;color:var(--ink-faint);font-size:.76rem}
+  .pickrow .bet{font-family:var(--mono);font-size:.82rem;color:var(--pitch);text-align:right;flex:none}
+
+  .resp{margin-top:40px;padding:18px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2);color:var(--ink-faint);font-size:.82rem;display:flex;gap:12px;align-items:flex-start}
+  .resp svg{flex:none;margin-top:1px;color:var(--med)}
+
+  footer{margin-top:50px;border-top:1px solid var(--line);padding:26px 0 50px;color:var(--ink-faint);font-size:.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media(max-width:860px){
+    .strategy{grid-template-columns:1fr}
+    nav{display:none}
+  }
+  @media(max-width:560px){
+    .grid{grid-template-columns:1fr}
+    .head-meta .live{display:none}
+    .preds{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head-row">
+    <div class="brand">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9bf00b" stroke-width="1.6">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7l3.5 2.5-1.3 4.1h-4.4L8.5 9.5z" fill="#9bf00b" stroke="none"/>
+          <path d="M12 3v2M21 12h-2M3 12h2M12 21v-2"/>
+        </svg>
+      </div>
+      <div>
+        <h1>PRO FOOTBALL <b>ANALYST</b> AI</h1>
+        <p>анализ матчей · риск-менеджмент</p>
+      </div>
+    </div>
+    <div class="head-meta">
+      <nav>
+        <a href="#matches">Матчи</a>
+        <a href="#strategy">Стратегия</a>
+      </nav>
+      <div class="live"><span class="dot"></span><span id="updated">данные дня</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <span class="kicker">● прогнозы с обоснованием, без «угадайки»</span>
+    <h2>Глубокий анализ матчей дня и <span>низкорисковые</span> ставочные инсайты</h2>
+    <p class="lead">Каждый прогноз рассчитывается из формы команд, личных встреч, ожидаемых голов (xG-модель), статистики углов и фактора домашнего поля — а не берётся случайно. Уверенность и уровень риска показаны открыто по каждому рынку.</p>
+    <div class="stat-strip">
+      <div class="stat"><b id="s-matches">—</b><small>матчей сегодня</small></div>
+      <div class="stat"><b id="s-low">—</b><small>низкий риск</small></div>
+      <div class="stat"><b id="s-leagues">—</b><small>лиг в выдаче</small></div>
+      <div class="stat"><b id="s-conf">—</b><small>ср. уверенность</small></div>
+    </div>
+    <div class="notice">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+      <span><b>Демо-данные.</b> Сейчас сайт показывает примерные матчи. После подключения вашего бесплатного API-ключа (инструкция в README) данные будут обновляться автоматически раз в день. Это аналитический инструмент, а не гарантия результата.</span>
+    </div>
+  </section>
+
+  <!-- MATCHES -->
+  <section id="matches">
+    <div class="sec-head">
+      <h3>Матчи сегодня</h3>
+      <p>прогноз · уверенность · уровень риска</p>
+    </div>
+
+    <div class="filters">
+      <select id="leagueFilter"><option value="all">Все лиги</option></select>
+      <div class="chips" id="riskChips">
+        <button class="chip active" data-risk="all">Любой риск</button>
+        <button class="chip" data-risk="low">Низкий</button>
+        <button class="chip" data-risk="medium">Средний</button>
+        <button class="chip" data-risk="high">Высокий</button>
+      </div>
+      <span class="count" id="matchCount"></span>
+    </div>
+
+    <div class="grid" id="matchGrid"></div>
+  </section>
+
+  <!-- STRATEGY -->
+  <section id="strategy">
+    <div class="sec-head">
+      <h3>Стратегия низкорискового роста</h3>
+      <p>лестница · банк 1000 → цель 10000 юнитов</p>
+    </div>
+
+    <div class="strategy">
+      <div class="panel">
+        <h4>🎯 Параметры</h4>
+        <div class="ladder-meta">
+          <div class="lm"><small>Стартовый банк</small><b>1000 ю</b></div>
+          <div class="lm"><small>Цель</small><b class="green">10 000 ю</b></div>
+          <div class="lm"><small>Ставка за шаг</small><b id="stakePct">5%</b></div>
+          <div class="lm"><small>Ставок в день</small><b>1–2</b></div>
+        </div>
+        <ul class="rules">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Только ставки с уровнем риска «Низкий».</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>При победе — шаг вверх по лестнице (банк растёт).</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>При проигрыше — шаг вниз, без догона и удвоений.</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Избегаем рынков с высокой дисперсией (точный счёт и т.п.).</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h4>📈 Лестница банка <span style="color:var(--ink-faint);font-size:.78rem;font-weight:400">(целевые ориентиры по уровням)</span></h4>
+        <table class="ladder">
+          <thead><tr><th>Уровень</th><th>Банк, ю</th><th>Ставка ~5%</th><th>Побед подряд*</th></tr></thead>
+          <tbody id="ladderBody"></tbody>
+        </table>
+        <h4 style="margin-top:22px">🗓 Пример пиков на сегодня <span style="color:var(--ink-faint);font-size:.78rem;font-weight:400">(только низкий риск)</span></h4>
+        <div class="picks" id="dailyPicks"></div>
+      </div>
+    </div>
+
+    <div class="resp">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span>Ставки связаны с риском потери средств. Ни одна модель не даёт «гарантированного выигрыша» — речь только о вероятности и управлении банком. «Побед подряд» в таблице — иллюстрация компаундинга при идеальной серии, реальный путь всегда включает проигрыши. Играйте ответственно, 18+. Никогда не ставьте больше, чем готовы потерять.</span>
+  </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <span>© <span id="year"></span> Pro Football Analyst AI · аналитический инструмент, не финансовый совет</span>
+  <span>Источник данных: football-data.org (после подключения ключа)</span>
+</footer>
+
+<script>
+/* ============================================================
+   PRO FOOTBALL ANALYST AI
+   Структура готова под реальный API (football-data.org / API-Football).
+   Поток данных:
+     1) GitHub Actions раз в день запускает scripts/fetch-matches.mjs
+     2) Скрипт тянет матчи, считает прогнозы тем же движком и пишет data/matches.json
+     3) Этот файл загружает data/matches.json и рендерит карточки
+   Если data/matches.json недоступен — используется встроенный демо-набор.
+   ============================================================ */
+
+/* ---------- ДВИЖОК АНАЛИЗА (детерминированный, без random) ---------- */
+const Engine = {
+  formPoints(form){ // последние матчи -> очки 0..1
+    if(!form||!form.length) return .5;
+    const m={W:3,D:1,L:0};
+    const got=form.reduce((s,r)=>s+(m[r]??1),0);
+    return got/(form.length*3);
+  },
+  // ожидаемые голы: атака команды + слабость обороны соперника, с поправкой на дом/гостей
+  expectedGoals(t){
+    const HOME_ADV=1.08, AWAY_PEN=0.94;
+    const xgH=((t.home.gf + t.away.ga)/2)*HOME_ADV;
+    const xgA=((t.away.gf + t.home.ga)/2)*AWAY_PEN;
+    return {xgH:+xgH.toFixed(2), xgA:+xgA.toFixed(2)};
+  },
+  analyze(t){
+    const {xgH,xgA}=this.expectedGoals(t);
+    const fH=this.formPoints(t.home.form), fA=this.formPoints(t.away.form);
+    // личные встречи -> лёгкий перевес
+    const h=t.h2h||{played:0,homeWins:0,draws:0,awayWins:0};
+    const h2hLean = h.played ? (h.homeWins - h.awayWins)/h.played : 0;
+    // итоговый перевес хозяев
+    const edge = (xgH - xgA) + (fH - fA)*0.9 + h2hLean*0.5;
+
+    // ----- РЕЗУЛЬТАТ -----
+    let result, rConf;
+    const a=Math.abs(edge);
+    if(edge > 0.45){ result='П1 (победа хозяев)'; }
+    else if(edge < -0.45){ result='П2 (победа гостей)'; }
+    else { result='Двойной шанс / ничья'; }
+    rConf = Math.round(Math.min(82, 50 + a*26));
+
+    // ----- ТОТАЛ ГОЛОВ -----
+    const total = xgH + xgA;
+    let tg, tgConf;
+    if(total >= 3.0){ tg='Тотал больше 2.5'; tgConf=Math.round(Math.min(80,55+(total-3.0)*22)); }
+    else if(total <= 2.1){ tg='Тотал меньше 2.5'; tgConf=Math.round(Math.min(80,55+(2.1-total)*30)); }
+    else if(total <= 1.6){ tg='Тотал меньше 1.5'; tgConf=Math.round(Math.min(82,60+(1.6-total)*28)); }
+    else { tg = total>=2.55 ? 'Тотал больше 2.5' : 'Тотал меньше 3.5'; tgConf=Math.round(52+Math.abs(total-2.5)*16); }
+
+    // ----- ОБЕ ЗАБЬЮТ -----
+    const bttsYes = (xgH>=1.05 && xgA>=1.05);
+    const btts = bttsYes ? 'Обе забьют: Да' : 'Обе забьют: Нет';
+    const bConf = Math.round( bttsYes
+      ? Math.min(80, 52 + (Math.min(xgH,xgA)-1.0)*40)
+      : Math.min(80, 52 + (1.05-Math.min(xgH,xgA))*45) );
+
+    // ----- УГЛОВЫЕ -----
+    const corners = (t.home.corners + t.away.corners) * 0.96;
+    const cLine = Math.floor(corners) - 0.5; // ближайшая линия снизу
+    const cPick = `Угловые больше ${cLine.toFixed(1)}`;
+    const cConf = Math.round(Math.min(78, 54 + Math.max(0,(corners-cLine-1))*9));
+
+    // ----- РИСК (по самому уверенному рынку) -----
+    const best = Math.max(rConf, tgConf, bConf, cConf);
+    let risk;
+    if(best >= 70) risk='low';
+    else if(best >= 60) risk='medium';
+    else risk='high';
+
+    // ----- КРАТКИЙ ВЫВОД -----
+    const lean = edge>0.2 ? `${t.home.name} выглядит сильнее` : edge<-0.2 ? `${t.away.name} имеет перевес` : 'силы примерно равны';
+    const goalsTxt = total>=2.8?'ожидается результативный матч':total<=2.0?'игра обещает быть закрытой':'умеренная результативность';
+    const summary = `По модели ${lean}: суммарные ожидаемые голы ≈ ${total.toFixed(1)}, ${goalsTxt}. Личные встречи и форма ${a<0.45?'не дают явного фаворита, поэтому ставка строится на тотале/угловых':'поддерживают основной исход'}.`;
+
+    const why = [
+      `Форма: хозяева ${(fH*100|0)}% очков, гости ${(fA*100|0)}% за последние ${t.home.form.length} матчей.`,
+      `xG-модель: ${xgH.toFixed(2)} – ${xgA.toFixed(2)} в пользу ${xgH>=xgA?'хозяев':'гостей'}.`,
+      `H2H: из ${h.played||0} встреч ${h.homeWins||0}–${h.draws||0}–${h.awayWins||0} (П1–Х–П2).`
+    ];
+
+    return {
+      result, rConf, tg, tgConf, btts, bConf, corners:cPick, cConf,
+      risk, confidence:best, summary, why, xgH, xgA, total:+total.toFixed(1)
+    };
+  }
+};
+
+/* ---------- ЦВЕТА БЭЙДЖЕЙ КОМАНД ---------- */
+function teamColor(name){
+  let hsum=0; for(const c of name) hsum=(hsum*31+c.charCodeAt(0))%360;
+  return `hsl(${hsum} 70% 60%)`;
+}
+const RISK_RU={low:'Низкий риск',medium:'Средний риск',high:'Высокий риск'};
+
+/* ---------- ДЕМО-ДАННЫЕ (используются, если нет data/matches.json) ----------
+   Реальный API заполнит ровно эту же структуру. */
+const MOCK = [
+  {id:1,league:'Премьер-лига',country:'🏴',code:'PL',kickoff:'17:30',
+   home:{name:'Арсенал',form:['W','W','D','W','L'],gf:2.1,ga:0.9,corners:6.4},
+   away:{name:'Брайтон',form:['L','D','W','L','D'],gf:1.3,ga:1.6,corners:4.8},
+   h2h:{played:6,homeWins:4,draws:1,awayWins:1}, odds:{home:1.55,draw:4.2,away:5.8}},
+  {id:2,league:'Ла Лига',country:'🇪🇸',code:'PD',kickoff:'20:00',
+   home:{name:'Хетафе',form:['D','L','D','D','W'],gf:1.0,ga:1.0,corners:4.2},
+   away:{name:'Алавес',form:['L','D','L','D','D'],gf:0.9,ga:1.2,corners:3.9},
+   h2h:{played:5,homeWins:2,draws:2,awayWins:1}, odds:{home:2.1,draw:3.0,away:3.6}},
+  {id:3,league:'Бундеслига',country:'🇩🇪',code:'BL1',kickoff:'19:30',
+   home:{name:'Байер',form:['W','W','W','D','W'],gf:2.4,ga:1.0,corners:6.9},
+   away:{name:'Аугсбург',form:['L','L','D','L','W'],gf:1.1,ga:1.8,corners:4.1},
+   h2h:{played:6,homeWins:5,draws:1,awayWins:0}, odds:{home:1.4,draw:5.0,away:6.5}},
+  {id:4,league:'Серия А',country:'🇮🇹',code:'SA',kickoff:'21:45',
+   home:{name:'Интер',form:['W','D','W','W','W'],gf:2.2,ga:0.8,corners:6.2},
+   away:{name:'Лацио',form:['W','L','W','D','W'],gf:1.7,ga:1.1,corners:5.4},
+   h2h:{played:6,homeWins:3,draws:2,awayWins:1}, odds:{home:1.7,draw:3.6,away:4.4}},
+  {id:5,league:'Лига 1',country:'🇫🇷',code:'FL1',kickoff:'22:00',
+   home:{name:'Нант',form:['D','L','L','D','L'],gf:0.9,ga:1.5,corners:4.0},
+   away:{name:'Лилль',form:['W','W','D','W','D'],gf:1.8,ga:1.0,corners:5.6},
+   h2h:{played:6,homeWins:1,draws:2,awayWins:3}, odds:{home:3.8,draw:3.2,away:2.0}},
+  {id:6,league:'Лига чемпионов',country:'⭐',code:'CL',kickoff:'22:00',
+   home:{name:'Реал Мадрид',form:['W','W','D','W','W'],gf:2.6,ga:1.1,corners:6.7},
+   away:{name:'Боруссия Д',form:['W','D','W','L','W'],gf:2.0,ga:1.3,corners:5.8},
+   h2h:{played:6,homeWins:3,draws:2,awayWins:1}, odds:{home:1.65,draw:4.0,away:4.6}},
+];
+
+/* ---------- ЗАГРУЗКА ДАННЫХ ---------- */
+let MATCHES=[];
+async function loadData(){
+  try{
+    const r=await fetch('data/matches.json',{cache:'no-store'});
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    MATCHES=j.matches||[];
+    if(j.updated){ document.getElementById('updated').textContent='обновлено '+j.updated; }
+    if(!MATCHES.length) throw 0;
+  }catch(e){
+    MATCHES=MOCK; // запасной демо-набор
+  }
+  // прогоняем движок по каждому матчу
+  MATCHES.forEach(m=>{ m.analysis=Engine.analyze(m); });
+  initFilters(); render(); buildStrategy();
+}
+
+/* ---------- ФИЛЬТРЫ ---------- */
+let activeRisk='all';
+function initFilters(){
+  const sel=document.getElementById('leagueFilter');
+  [...new Set(MATCHES.map(m=>m.league))].forEach(l=>{
+    const o=document.createElement('option'); o.value=l; o.textContent=l; sel.appendChild(o);
+  });
+  sel.onchange=render;
+  document.querySelectorAll('#riskChips .chip').forEach(c=>{
+    c.onclick=()=>{
+      document.querySelectorAll('#riskChips .chip').forEach(x=>x.classList.remove('active'));
+      c.classList.add('active'); activeRisk=c.dataset.risk; render();
+    };
+  });
+}
+
+/* ---------- РЕНДЕР КАРТОЧЕК ---------- */
+function formHTML(form){return `<div class="form">${form.map(r=>`<i class="${r}">${r==='W'?'В':r==='D'?'Н':'П'}</i>`).join('')}</div>`;}
+function teamRow(t){
+  return `<div class="team-row">
+    <span class="nm"><span class="badge" style="background:${teamColor(t.name)}">${t.name.slice(0,2).toUpperCase()}</span>${t.name}</span>
+    ${formHTML(t.form)}
+  </div>`;
+}
+function pred(label,val,conf){
+  return `<div class="pred"><small>${label}</small><b>${val}</b>
+    <div class="conf-bar"><i style="width:${conf}%"></i></div>
+    <span class="conf">уверенность ${conf}%</span></div>`;
+}
+function card(m){
+  const a=m.analysis;
+  return `<article class="card">
+    <div class="card-top">
+      <span class="league-tag"><span class="flag">${m.country||'⚽'}</span>${m.league}</span>
+      <span class="ko">${m.kickoff}</span>
+    </div>
+    <div class="teams">
+      ${teamRow(m.home)}
+      <div class="vs">— VS —</div>
+      ${teamRow(m.away)}
+    </div>
+    <div class="card-top" style="border-top:1px solid var(--line);border-bottom:none">
+      <span class="league-tag">Итоговая уверенность: <b style="color:var(--ink)">${a.confidence}%</b></span>
+      <span class="risk-flag risk-${a.risk}">${RISK_RU[a.risk]}</span>
+    </div>
+    <p class="summary">${a.summary}</p>
+    <ul class="why">
+      ${a.why.map(w=>`<li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>${w}</li>`).join('')}
+    </ul>
+    <div class="preds">
+      ${pred('Исход',a.result,a.rConf)}
+      ${pred('Тотал голов',a.tg,a.tgConf)}
+      ${pred('Обе забьют',a.btts.replace('Обе забьют: ',''),a.bConf)}
+      ${pred('Угловые',a.corners,a.cConf)}
+    </div>
+    <div class="card-foot">
+      <span class="odds">${m.odds?`<span>Кэф:</span> <b>${m.odds.home}</b> / <b>${m.odds.draw}</b> / <b>${m.odds.away}</b>`:'кэфы — индикатор'}</span>
+      <span>xG ${a.xgH} – ${a.xgA}</span>
+    </div>
+  </article>`;
+}
+function render(){
+  const league=document.getElementById('leagueFilter').value;
+  let list=MATCHES.filter(m=>(league==='all'||m.league===league)&&(activeRisk==='all'||m.analysis.risk===activeRisk));
+  const grid=document.getElementById('matchGrid');
+  grid.innerHTML = list.length ? list.map(card).join('') :
+    `<div class="empty">Под выбранные фильтры матчей нет. Попробуйте другой риск или лигу.</div>`;
+  document.getElementById('matchCount').textContent=`${list.length} из ${MATCHES.length} матчей`;
+  // hero stats
+  document.getElementById('s-matches').textContent=MATCHES.length;
+  document.getElementById('s-low').textContent=MATCHES.filter(m=>m.analysis.risk==='low').length;
+  document.getElementById('s-leagues').textContent=new Set(MATCHES.map(m=>m.league)).size;
+  const avg=Math.round(MATCHES.reduce((s,m)=>s+m.analysis.confidence,0)/MATCHES.length);
+  document.getElementById('s-conf').textContent=avg+'%';
+}
+
+/* ---------- СТРАТЕГИЯ: ЛЕСТНИЦА + ПИКИ ---------- */
+function buildStrategy(){
+  const STEP=0.05; // 5% за шаг
+  document.getElementById('stakePct').textContent='5%';
+  // строим уровни-ориентиры от 1000 к 10000
+  const milestones=[1000,1500,2200,3200,4600,6700,10000];
+  let prev=1000;
+  const rows=milestones.map((bank,i)=>{
+    const wins=Math.ceil(Math.log(bank/1000)/Math.log(1+STEP)); // побед при +5% компаундинге
+    const stake=Math.round(bank*STEP);
+    const html=`<tr><td class="lvl">${i+1}</td><td>${bank.toLocaleString('ru')}</td><td>${stake.toLocaleString('ru')}</td><td>${wins}</td></tr>`;
+    prev=bank; return html;
+  }).join('');
+  document.getElementById('ladderBody').innerHTML=rows;
+
+  // примеры пиков = низкорисковые матчи дня (1-2 шт)
+  const low=MATCHES.filter(m=>m.analysis.risk==='low')
+    .sort((a,b)=>b.analysis.confidence-a.analysis.confidence).slice(0,2);
+  const picks=document.getElementById('dailyPicks');
+  if(!low.length){
+    picks.innerHTML=`<div class="pickrow"><div class="info"><b>Сегодня нет ставок с низким риском.</b><span>В такой день стратегия рекомендует пропуск — это нормально.</span></div></div>`;
+    return;
+  }
+  picks.innerHTML=low.map((m,i)=>{
+    const a=m.analysis;
+    // берём самый уверенный рынок матча
+    const markets=[['Исход',a.result,a.rConf],['Тотал',a.tg,a.tgConf],['Обе забьют',a.btts,a.bConf],['Угловые',a.corners,a.cConf]];
+    markets.sort((x,y)=>y[2]-x[2]);
+    const [mk,val,conf]=markets[0];
+    return `<div class="pickrow">
+      <span class="n">${i+1}</span>
+      <div class="info"><b>${m.home.name} — ${m.away.name}</b><span>${m.league} · ${m.kickoff} · ${mk}</span></div>
+      <span class="bet">${val}<br>${conf}%</span>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('year').textContent=new Date().getFullYear();
+loadData();
+</script>
+</body>
+</html>
