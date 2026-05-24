@@ -1,5 +1,59 @@
 {
-  "updated": "23.05.2026, 11:00:33",
-  "source": "football-data.org · 2026-05-23",
-  "matches": []
+  "updated": "24.05.2026, 11:01:58",
+  "source": "football-data.org · 2026-05-24",
+  "matches": [
+    {
+      "id": 554903,
+      "league": "Серия А (Бразилия)",
+      "country": "🇧🇷",
+      "code": "BSA",
+      "kickoff": "00:00",
+      "home": {
+        "name": "Flamengo",
+        "form": [
+          "L",
+          "W",
+          "D",
+          "W",
+          "D"
+        ],
+        "gf": 1.75,
+        "ga": 0.65,
+        "corners": 5.2
+      },
+      "away": {
+        "name": "Palmeiras",
+        "form": [
+          "W",
+          "L",
+          "D",
+          "D",
+          "W"
+        ],
+        "gf": 1.75,
+        "ga": 0.65,
+        "corners": 4.8
+      },
+      "h2h": {
+        "played": 0,
+        "homeWins": 0,
+        "draws": 0,
+        "awayWins": 0
+      },
+      "analysis": {
+        "result": "Двойной шанс / ничья",
+        "rConf": 54,
+        "tg": "Тотал меньше 3.5",
+        "tgConf": 53,
+        "btts": "Обе забьют: Да",
+        "bConf": 57,
+        "corners": "Угловые больше 8.5",
+        "cConf": 55,
+        "risk": "high",
+        "confidence": 57,
+        "xgH": 1.3,
+        "xgA": 1.13
+      }
+    }
+  ]
 }
