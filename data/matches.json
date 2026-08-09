@@ -1,5 +1,59 @@
 {
-  "updated": "08.08.2026, 06:51:25",
-  "source": "football-data.org · 2026-08-08",
-  "matches": []
+  "updated": "09.08.2026, 06:55:23",
+  "source": "football-data.org · 2026-08-09",
+  "matches": [
+    {
+      "id": 554951,
+      "league": "Серия А (Бразилия)",
+      "country": "🇧🇷",
+      "code": "BSA",
+      "kickoff": "00:00",
+      "home": {
+        "name": "Botafogo",
+        "form": [
+          "D",
+          "W",
+          "D",
+          "W",
+          "L"
+        ],
+        "gf": 1.75,
+        "ga": 0.65,
+        "corners": 5.2
+      },
+      "away": {
+        "name": "Fluminense",
+        "form": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "gf": 1.47,
+        "ga": 0.93,
+        "corners": 4.8
+      },
+      "h2h": {
+        "played": 0,
+        "homeWins": 0,
+        "draws": 0,
+        "awayWins": 0
+      },
+      "analysis": {
+        "result": "П1 (победа хозяев)",
+        "rConf": 66,
+        "tg": "Тотал меньше 3.5",
+        "tgConf": 53,
+        "btts": "Обе забьют: Нет",
+        "bConf": 54,
+        "corners": "Угловые больше 8.5",
+        "cConf": 55,
+        "risk": "medium",
+        "confidence": 66,
+        "xgH": 1.45,
+        "xgA": 1
+      }
+    }
+  ]
 }
