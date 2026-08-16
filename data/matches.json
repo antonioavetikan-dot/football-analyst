@@ -1,5 +1,59 @@
 {
-  "updated": "15.08.2026, 06:36:07",
-  "source": "football-data.org · 2026-08-15",
-  "matches": []
+  "updated": "16.08.2026, 06:38:22",
+  "source": "football-data.org · 2026-08-16",
+  "matches": [
+    {
+      "id": 554967,
+      "league": "Серия А (Бразилия)",
+      "country": "🇧🇷",
+      "code": "BSA",
+      "kickoff": "00:00",
+      "home": {
+        "name": "São Paulo",
+        "form": [
+          "D",
+          "L",
+          "D",
+          "L",
+          "L"
+        ],
+        "gf": 1.19,
+        "ga": 1.21,
+        "corners": 5.2
+      },
+      "away": {
+        "name": "Coritiba",
+        "form": [
+          "D",
+          "W",
+          "L",
+          "D",
+          "L"
+        ],
+        "gf": 1.47,
+        "ga": 0.93,
+        "corners": 4.8
+      },
+      "h2h": {
+        "played": 0,
+        "homeWins": 0,
+        "draws": 0,
+        "awayWins": 0
+      },
+      "analysis": {
+        "result": "Двойной шанс / ничья",
+        "rConf": 58,
+        "tg": "Тотал меньше 3.5",
+        "tgConf": 54,
+        "btts": "Обе забьют: Да",
+        "bConf": 58,
+        "corners": "Угловые больше 8.5",
+        "cConf": 55,
+        "risk": "high",
+        "confidence": 58,
+        "xgH": 1.14,
+        "xgA": 1.26
+      }
+    }
+  ]
 }
