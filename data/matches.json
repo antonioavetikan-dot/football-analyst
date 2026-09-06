@@ -1,5 +1,59 @@
 {
-  "updated": "05.09.2026, 10:01:10",
-  "source": "football-data.org · 2026-09-05",
-  "matches": []
+  "updated": "06.09.2026, 10:21:05",
+  "source": "football-data.org · 2026-09-06",
+  "matches": [
+    {
+      "id": 554995,
+      "league": "Серия А (Бразилия)",
+      "country": "🇧🇷",
+      "code": "BSA",
+      "kickoff": "00:00",
+      "home": {
+        "name": "Fluminense",
+        "form": [
+          "W",
+          "D",
+          "W",
+          "W",
+          "W"
+        ],
+        "gf": 2.21,
+        "ga": 0.19,
+        "corners": 5.2
+      },
+      "away": {
+        "name": "Vasco da Gama",
+        "form": [
+          "L",
+          "W",
+          "L",
+          "L",
+          "D"
+        ],
+        "gf": 1.37,
+        "ga": 1.03,
+        "corners": 4.8
+      },
+      "h2h": {
+        "played": 0,
+        "homeWins": 0,
+        "draws": 0,
+        "awayWins": 0
+      },
+      "analysis": {
+        "result": "П1 (победа хозяев)",
+        "rConf": 82,
+        "tg": "Тотал меньше 3.5",
+        "tgConf": 52,
+        "btts": "Обе забьют: Нет",
+        "bConf": 66,
+        "corners": "Угловые больше 8.5",
+        "cConf": 55,
+        "risk": "low",
+        "confidence": 82,
+        "xgH": 1.75,
+        "xgA": 0.73
+      }
+    }
+  ]
 }
