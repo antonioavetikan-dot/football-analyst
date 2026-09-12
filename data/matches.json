@@ -1,5 +1,59 @@
 {
-  "updated": "11.09.2026, 10:41:39",
-  "source": "football-data.org · 2026-09-11",
-  "matches": []
+  "updated": "12.09.2026, 10:10:40",
+  "source": "football-data.org · 2026-09-12",
+  "matches": [
+    {
+      "id": 555004,
+      "league": "Серия А (Бразилия)",
+      "country": "🇧🇷",
+      "code": "BSA",
+      "kickoff": "00:00",
+      "home": {
+        "name": "Coritiba",
+        "form": [
+          "D",
+          "L",
+          "W",
+          "W",
+          "D"
+        ],
+        "gf": 1.75,
+        "ga": 0.65,
+        "corners": 5.2
+      },
+      "away": {
+        "name": "Paranaense",
+        "form": [
+          "D",
+          "L",
+          "D",
+          "W",
+          "D"
+        ],
+        "gf": 1.56,
+        "ga": 0.84,
+        "corners": 4.8
+      },
+      "h2h": {
+        "played": 0,
+        "homeWins": 0,
+        "draws": 0,
+        "awayWins": 0
+      },
+      "analysis": {
+        "result": "П1 (победа хозяев)",
+        "rConf": 62,
+        "tg": "Тотал меньше 3.5",
+        "tgConf": 53,
+        "btts": "Обе забьют: Нет",
+        "bConf": 52,
+        "corners": "Угловые больше 8.5",
+        "cConf": 55,
+        "risk": "medium",
+        "confidence": 62,
+        "xgH": 1.4,
+        "xgA": 1.04
+      }
+    }
+  ]
 }
