@@ -1,5 +1,59 @@
 {
-  "updated": "19.09.2026, 10:23:34",
-  "source": "football-data.org · 2026-09-19",
-  "matches": []
+  "updated": "20.09.2026, 10:43:30",
+  "source": "football-data.org · 2026-09-20",
+  "matches": [
+    {
+      "id": 555017,
+      "league": "Серия А (Бразилия)",
+      "country": "🇧🇷",
+      "code": "BSA",
+      "kickoff": "00:00",
+      "home": {
+        "name": "São Paulo",
+        "form": [
+          "W",
+          "L",
+          "W",
+          "W",
+          "L"
+        ],
+        "gf": 1.84,
+        "ga": 0.56,
+        "corners": 5.2
+      },
+      "away": {
+        "name": "Internacional",
+        "form": [
+          "L",
+          "W",
+          "L",
+          "L",
+          "D"
+        ],
+        "gf": 1.37,
+        "ga": 1.03,
+        "corners": 4.8
+      },
+      "h2h": {
+        "played": 0,
+        "homeWins": 0,
+        "draws": 0,
+        "awayWins": 0
+      },
+      "analysis": {
+        "result": "П1 (победа хозяев)",
+        "rConf": 74,
+        "tg": "Тотал меньше 3.5",
+        "tgConf": 53,
+        "btts": "Обе забьют: Нет",
+        "bConf": 58,
+        "corners": "Угловые больше 8.5",
+        "cConf": 55,
+        "risk": "low",
+        "confidence": 74,
+        "xgH": 1.55,
+        "xgA": 0.91
+      }
+    }
+  ]
 }
