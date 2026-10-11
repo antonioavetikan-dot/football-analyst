@@ -1,5 +1,59 @@
 {
-  "updated": "10.10.2026, 11:58:51",
-  "source": "football-data.org · 2026-10-10",
-  "matches": []
+  "updated": "11.10.2026, 12:11:24",
+  "source": "football-data.org · 2026-10-11",
+  "matches": [
+    {
+      "id": 555038,
+      "league": "Серия А (Бразилия)",
+      "country": "🇧🇷",
+      "code": "BSA",
+      "kickoff": "00:00",
+      "home": {
+        "name": "São Paulo",
+        "form": [
+          "W",
+          "L",
+          "L",
+          "W",
+          "L"
+        ],
+        "gf": 1.56,
+        "ga": 0.84,
+        "corners": 5.2
+      },
+      "away": {
+        "name": "Vitória",
+        "form": [
+          "L",
+          "W",
+          "L",
+          "D",
+          "W"
+        ],
+        "gf": 1.65,
+        "ga": 0.75,
+        "corners": 4.8
+      },
+      "h2h": {
+        "played": 0,
+        "homeWins": 0,
+        "draws": 0,
+        "awayWins": 0
+      },
+      "analysis": {
+        "result": "Двойной шанс / ничья",
+        "rConf": 51,
+        "tg": "Тотал меньше 3.5",
+        "tgConf": 53,
+        "btts": "Обе забьют: Да",
+        "bConf": 59,
+        "corners": "Угловые больше 8.5",
+        "cConf": 55,
+        "risk": "high",
+        "confidence": 59,
+        "xgH": 1.25,
+        "xgA": 1.17
+      }
+    }
+  ]
 }
