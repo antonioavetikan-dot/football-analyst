@@ -1,5 +1,59 @@
 {
-  "updated": "12.10.2026, 14:32:52",
-  "source": "football-data.org · 2026-10-12",
-  "matches": []
+  "updated": "13.10.2026, 13:39:17",
+  "source": "football-data.org · 2026-10-13",
+  "matches": [
+    {
+      "id": 555032,
+      "league": "Серия А (Бразилия)",
+      "country": "🇧🇷",
+      "code": "BSA",
+      "kickoff": "00:00",
+      "home": {
+        "name": "Bragantino",
+        "form": [
+          "W",
+          "D",
+          "L",
+          "L",
+          "D"
+        ],
+        "gf": 1.47,
+        "ga": 0.93,
+        "corners": 5.2
+      },
+      "away": {
+        "name": "Cruzeiro",
+        "form": [
+          "L",
+          "W",
+          "W",
+          "L",
+          "W"
+        ],
+        "gf": 1.84,
+        "ga": 0.56,
+        "corners": 4.8
+      },
+      "h2h": {
+        "played": 0,
+        "homeWins": 0,
+        "draws": 0,
+        "awayWins": 0
+      },
+      "analysis": {
+        "result": "Двойной шанс / ничья",
+        "rConf": 61,
+        "tg": "Тотал меньше 3.5",
+        "tgConf": 54,
+        "btts": "Обе забьют: Да",
+        "bConf": 56,
+        "corners": "Угловые больше 8.5",
+        "cConf": 55,
+        "risk": "medium",
+        "confidence": 61,
+        "xgH": 1.1,
+        "xgA": 1.3
+      }
+    }
+  ]
 }
