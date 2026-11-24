@@ -1,5 +1,59 @@
 {
-  "updated": "23.11.2026, 17:29:20",
-  "source": "football-data.org · 2026-11-23",
-  "matches": []
+  "updated": "24.11.2026, 17:01:11",
+  "source": "football-data.org · 2026-11-24",
+  "matches": [
+    {
+      "id": 555099,
+      "league": "Серия А (Бразилия)",
+      "country": "🇧🇷",
+      "code": "BSA",
+      "kickoff": "00:00",
+      "home": {
+        "name": "Santos",
+        "form": [
+          "L",
+          "W",
+          "L",
+          "D",
+          "D"
+        ],
+        "gf": 1.47,
+        "ga": 0.93,
+        "corners": 5.2
+      },
+      "away": {
+        "name": "Grêmio",
+        "form": [
+          "W",
+          "D",
+          "L",
+          "W",
+          "W"
+        ],
+        "gf": 1.93,
+        "ga": 0.47,
+        "corners": 4.8
+      },
+      "h2h": {
+        "played": 0,
+        "homeWins": 0,
+        "draws": 0,
+        "awayWins": 0
+      },
+      "analysis": {
+        "result": "П2 (победа гостей)",
+        "rConf": 65,
+        "tg": "Тотал меньше 3.5",
+        "tgConf": 54,
+        "btts": "Обе забьют: Да",
+        "bConf": 54,
+        "corners": "Угловые больше 8.5",
+        "cConf": 55,
+        "risk": "medium",
+        "confidence": 65,
+        "xgH": 1.05,
+        "xgA": 1.34
+      }
+    }
+  ]
 }
